@@ -1,10 +1,11 @@
-class Component {
+export default class Component {
   $target;
   state;
   constructor($target) {
     this.$target = $target;
     this.setup();
     this.render();
+    this.setEvent();
   }
 
   setup() {}
@@ -14,7 +15,6 @@ class Component {
 
   render() {
     this.$target.innerHTML = this.template();
-    this.setEvent();
   }
 
   setEvent() {}
