@@ -1,41 +1,35 @@
 import Component from "../../core/Component.js";
 
 export default class Items extends Component {
-  setup() {
-    this.state = { items: ["item1", "item2"] };
-  }
 
   template() {
-    const { items } = this.state;
+    const { filteredItems } = this.$props;
     return `
-            <ul>
-            ${items
-              .map(
-                (item, idx) =>
-                  `<li>
-                    ${item}
-                    <button class='deleteBtn' data-index=${idx}>
-                      삭제하기
-                    </button>
-                  </li>`
-              )
-              .join("")}
-            </ul>
-            <button class='addBtn'>추가</button>
-        `;
+      <ul>
+        ${filteredItems.map(({contents, active, seq}) => `
+          <li data-seq="${seq}">
+            ${contents}
+            <button class="toggleBtn" style="color: ${active ? '#09F' : '#F09'}">
+              ${active ? '활성' : '비활성'}
+            </button>
+            <button class="deleteBtn">삭제</button>
+          </li>
+        `).join('')}
+      </ul>
+    `
   }
 
   setEvent() {
-    this.$target.addEventListener("click", ({ target }) => {
-      const items = [...this.state.items];
-      if (target.classList.contains("addBtn")) {
-        this.setState({ items: [...items, `item${items.length + 1}`] });
-      }
-      if (target.classList.contains("deleteBtn")) {
-        console.log(target.dataset.index);
-        items.splice(target.dataset.index, 1);
-        this.setState({ items });
-      }
+    const { deleteItem, toggleItem } = this.$props;
+
+    this.addEvent('click', '.deleteBtn', ({target}) => {
+      deleteItem(Number(target.closest('[data-seq]').dataset.seq));
     });
+
+    this.addEvent('click', '.toggleBtn', ({target}) => {
+      toggleItem(Number(target.closest('[data-seq]').dataset.seq));
+    });
+
   }
+
 }

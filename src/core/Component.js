@@ -1,62 +1,30 @@
 export default class Component {
   $target;
-  state;
-  constructor($target) {
+  $props;
+  $state;
+  constructor ($target, $props) {
     this.$target = $target;
+    this.$props = $props;
     this.setup();
-    this.render();
     this.setEvent();
-  }
-
-  setup() {}
-  template() {
-    return "";
-  }
-
-  render() {
-    this.$target.innerHTML = this.template();
-  }
-
-  setEvent() {}
-
-  setState(newState) {
-    this.state = { ...this.state, ...newState };
     this.render();
   }
-}
-
-class App extends Component {
-  setup() {
-    this.state = { items: ["item1", "item2"] };
+  setup () {};
+  mounted () {};
+  template () { return ''; }
+  render () {
+    this.$target.innerHTML = this.template();
+    this.mounted();
   }
-
-  template() {
-    const { items } = this.state;
-    return `
-    <ul>
-      ${items
-        .map(
-          (item, idx) =>
-            `<li>${item}<button class='del' id='idx${idx}'>삭제</button></li>`
-        )
-        .join("")}
-    </ul>
-    <button class="add">추가</button>
-    `;
+  setEvent () {}
+  setState (newState) {
+    this.$state = { ...this.$state, ...newState };
+    this.render();
   }
-
-  setEvent() {
-    const { items } = this.state;
-    this.$target.querySelector(".add").addEventListener("click", () => {
-      this.setState({ items: [...items, `item${items.length + 1}`] });
-    });
-
-    items.forEach((_, idx) => {
-      this.$target.querySelector(`#idx${idx}`).addEventListener("click", () => {
-        const { items } = this.state;
-        items.splice(idx, 1);
-        this.setState({ items: [...items] });
-      });
-    });
+  addEvent (eventType, selector, callback) {
+    this.$target.addEventListener(eventType, event => {
+      if (!event.target.closest(selector)) return false;
+      callback(event);
+    })
   }
 }
